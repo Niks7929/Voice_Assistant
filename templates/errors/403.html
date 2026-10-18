@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Access Denied - AI Voice Assistant{% endblock %}
+{% block content %}
+<div class="min-h-[calc(100vh-12rem)] flex flex-col items-center justify-center text-center px-4">
+    <div class="w-20 h-20 rounded-full bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center text-3xl mb-4">
+        <i class="fa-solid fa-user-lock"></i>
+    </div>
+    <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white mb-2">403 - Access Forbidden</h1>
+    <p class="text-slate-600 dark:text-slate-400 max-w-md mb-6 text-sm">
+        You do not have permission to view this page or execute this administrative action.
+    </p>
+    <a href="{{ url_for('main.index') }}" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-all shadow-md">
+        Back to Home
+    </a>
+</div>
+{% endblock %}

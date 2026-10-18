@@ -1,0 +1,288 @@
+{% extends 'base.html' %}
+
+{% block title %}Developer Dashboard - CodeVocalis AI{% endblock %}
+
+{% block header %}{% endblock %} <!-- Dashboard uses its own dedicated full-height sidebar and topbar layout -->
+
+{% block content %}
+<div class="flex h-screen overflow-hidden bg-slate-950 text-slate-100">
+    
+    <!-- ============================================== -->
+    <!-- SIDEBAR: CHAT HISTORY & TOOLS                  -->
+    <!-- ============================================== -->
+    <aside class="w-72 bg-slate-900/90 border-r border-slate-800/80 flex flex-col flex-shrink-0 transition-all duration-300">
+        <!-- Logo & Brand Header -->
+        <div class="p-4 border-b border-slate-800/80 flex items-center justify-between">
+            <a href="{{ url_for('main.index') }}" class="flex items-center gap-2.5 no-underline">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+                    <i class="fa-solid fa-code text-sm"></i>
+                </div>
+                <div>
+                    <span class="text-sm font-black text-white tracking-tight">CodeVocalis <span class="text-indigo-400">AI</span></span>
+                    <p class="text-[10px] text-slate-400">Developer Voice Assistant</p>
+                </div>
+            </a>
+            <a href="{{ url_for('main.index') }}" class="text-slate-400 hover:text-slate-200 text-xs" title="Return to Landing Page">
+                <i class="fa-solid fa-house"></i>
+            </a>
+        </div>
+
+        <!-- New Chat Button -->
+        <div class="p-4">
+            <button id="btn-new-chat" type="button" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 transition-all">
+                <i class="fa-solid fa-plus"></i> New Code Session
+            </button>
+        </div>
+
+        <!-- Conversation History List -->
+        <div class="flex-1 overflow-y-auto px-3 space-y-1">
+            <div class="px-2 pt-2 pb-1 flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                <span>Recent Conversations</span>
+                <button id="btn-clear-history" type="button" class="text-slate-500 hover:text-rose-400 transition-colors" title="Clear all history">
+                    <i class="fa-regular fa-trash-can"></i>
+                </button>
+            </div>
+
+            <div class="space-y-1" id="sidebar-conv-list">
+                {% if conversations %}
+                    {% for conv in conversations %}
+                        <div class="group flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium text-slate-300 hover:bg-slate-800/80 cursor-pointer transition-colors conv-item" data-conv-id="{{ conv.id }}">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <i class="fa-regular fa-message text-indigo-400 flex-shrink-0"></i>
+                                <span class="truncate conv-title">{{ conv.title }}</span>
+                            </div>
+                            <button type="button" class="btn-delete-conv opacity-0 group-hover:opacity-100 text-slate-500 hover:text-rose-400 p-1 transition-opacity" data-conv-id="{{ conv.id }}" title="Delete chat">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="px-3 py-3 text-xs text-slate-500 italic" id="empty-history-text">No previous conversations yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- User Profile Footer in Sidebar -->
+        <div class="p-3.5 border-t border-slate-800/80 bg-slate-950/60 flex items-center justify-between">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-bold flex items-center justify-center text-xs flex-shrink-0 shadow-md">
+                    {{ current_user.full_name[:1].upper() if current_user.full_name else 'U' }}
+                </div>
+                <div class="min-w-0">
+                    <p class="text-xs font-bold text-slate-200 truncate leading-tight">{{ current_user.full_name }}</p>
+                    <p class="text-[10px] text-slate-400 truncate">@{{ current_user.username }}</p>
+                </div>
+            </div>
+            <a href="{{ url_for('auth.logout') }}" class="text-slate-400 hover:text-rose-400 p-1.5 rounded-lg hover:bg-slate-800 transition-colors" title="Sign Out">
+                <i class="fa-solid fa-right-from-bracket text-xs"></i>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ============================================== -->
+    <!-- MAIN WORKSPACE                                 -->
+    <!-- ============================================== -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-950">
+        
+        <!-- Top Toolbar -->
+        <header class="bg-slate-900/60 border-b border-slate-800/80 py-3 px-6 flex items-center justify-between flex-shrink-0 backdrop-blur-md">
+            <div class="flex items-center gap-3">
+                <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                    <span id="active-chat-title">New Code Session</span>
+                </h2>
+                <span id="active-tool-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                    PROGRAMMING_AI
+                </span>
+            </div>
+
+            <!-- Toolbar Controls -->
+            <div class="flex items-center gap-3">
+                <!-- Attach Code/Doc Button -->
+                <label for="doc-file-input" class="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/80 hover:bg-slate-800 text-slate-300 border border-slate-700/60 transition-colors" title="Attach Code File (.py, .js, .ts, .java, .cpp, .sql, .pdf, .docx)">
+                    <i class="fa-solid fa-paperclip text-indigo-400"></i>
+                    <span class="hidden sm:inline">Attach Code/Doc</span>
+                </label>
+                <input type="file" id="doc-file-input" class="hidden" accept=".py,.js,.jsx,.ts,.tsx,.java,.c,.cpp,.h,.cs,.go,.rs,.php,.sql,.sh,.json,.txt,.md,.pdf,.docx">
+
+                <!-- URL Doc Analyzer -->
+                <button id="btn-open-url-modal" type="button" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/80 hover:bg-slate-800 text-slate-300 border border-slate-700/60 transition-colors" title="Analyze Documentation Webpage URL">
+                    <i class="fa-solid fa-globe text-blue-400"></i>
+                    <span class="hidden sm:inline">URL Docs</span>
+                </button>
+
+                <!-- AI API Key Settings -->
+                <button id="btn-open-apikey-modal" type="button" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 transition-colors" title="Configure Google Gemini API Key for ChatGPT-level AI">
+                    <i class="fa-solid fa-key text-indigo-400"></i>
+                    <span class="hidden sm:inline">AI Key</span>
+                </button>
+
+                <!-- Voice ON / OFF Toggle -->
+                <button id="toggle-tts-btn" type="button" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-950/60 text-emerald-300 border border-emerald-500/30 transition-colors" title="Toggle Voice Response Narration">
+                    <i class="fa-solid fa-volume-high" id="tts-icon"></i>
+                    <span id="tts-label">Voice ON</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Active Attachment Banner -->
+        <div id="active-attachment-banner" class="hidden bg-indigo-950/40 px-6 py-2 border-b border-indigo-500/20 flex items-center justify-between text-xs text-indigo-300 animate-fade-in">
+            <span class="flex items-center gap-2 font-medium">
+                <i class="fa-solid fa-file-code text-indigo-400"></i>
+                <span id="active-attachment-name">Document context active</span>
+            </span>
+            <button id="btn-remove-attachment" type="button" class="text-indigo-400 hover:text-indigo-200 font-bold flex items-center gap-1">
+                <i class="fa-solid fa-xmark"></i> Remove Context
+            </button>
+        </div>
+
+        <!-- Chat Messages Scroll Container -->
+        <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6" id="chat-messages-container">
+            <!-- Welcome Canvas for Fresh Sessions -->
+            <div class="h-full flex flex-col items-center justify-center text-center p-8 max-w-xl mx-auto" id="welcome-canvas">
+                <div class="w-16 h-16 rounded-2xl bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-2xl mb-4 shadow-inner">
+                    <i class="fa-solid fa-code"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">CodeVocalis Programming Assistant</h3>
+                <p class="text-xs text-slate-400 mb-6 leading-relaxed">
+                    Click the microphone below to speak your coding question, or type in the console box. You can ask about any programming language, framework, algorithm, or bug.
+                </p>
+
+                <!-- Quick Prompt Chips -->
+                <div class="flex flex-wrap gap-2 justify-center">
+                    <button type="button" class="sample-prompt-btn text-xs bg-slate-900 border border-slate-800 text-slate-300 py-2 px-3 rounded-xl hover:border-indigo-500/50 hover:text-white transition-all">
+                        "How to create a React component with useState and useEffect?"
+                    </button>
+                    <button type="button" class="sample-prompt-btn text-xs bg-slate-900 border border-slate-800 text-slate-300 py-2 px-3 rounded-xl hover:border-indigo-500/50 hover:text-white transition-all">
+                        "Create a FastAPI route with Pydantic in Python"
+                    </button>
+                    <button type="button" class="sample-prompt-btn text-xs bg-slate-900 border border-slate-800 text-slate-300 py-2 px-3 rounded-xl hover:border-indigo-500/50 hover:text-white transition-all">
+                        "Binary search algorithm in Python with complexity"
+                    </button>
+                    <button type="button" class="sample-prompt-btn text-xs bg-slate-900 border border-slate-800 text-slate-300 py-2 px-3 rounded-xl hover:border-indigo-500/50 hover:text-white transition-all">
+                        "Complex SQL query with INNER JOIN and GROUP BY"
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- BOTTOM AUDIO & CONSOLE INPUT BAR              -->
+        <!-- ============================================== -->
+        <div class="border-t border-slate-800/80 bg-slate-900/80 p-4 sm:p-5 flex-shrink-0 backdrop-blur-md">
+            <div class="max-w-4xl mx-auto space-y-3">
+                
+                <!-- Voice Microphone Stage -->
+                <div class="flex flex-col items-center justify-center">
+                    <div class="relative group">
+                        <!-- Ripple Waves on Listening -->
+                        <div id="mic-pulse-ring" class="hidden absolute -inset-3 rounded-full bg-rose-500/30 animate-ping"></div>
+                        <div id="mic-pulse-glow" class="hidden absolute -inset-2 rounded-full bg-rose-500/40 blur-md"></div>
+                        
+                        <button id="mic-btn" type="button" class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-xl sm:text-2xl shadow-xl shadow-indigo-500/25 hover:scale-105 active:scale-95 transition-all">
+                            <i class="fa-solid fa-microphone" id="mic-icon"></i>
+                        </button>
+                    </div>
+
+                    <!-- Voice Status Indicator -->
+                    <div class="mt-2.5 flex items-center gap-2">
+                        <span id="voice-status-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-slate-950 border border-slate-800 text-slate-400">
+                            <i class="fa-solid fa-circle text-[7px] text-emerald-400" id="status-indicator-dot"></i>
+                            <span id="status-text">Click microphone to speak</span>
+                        </span>
+                    </div>
+
+                    <!-- Live Transcription Text -->
+                    <p id="speech-live-text" class="text-xs text-indigo-400 font-medium h-4 mt-1 italic transition-all"></p>
+                </div>
+
+                <!-- Text / Code Input Form -->
+                <form id="chat-form" class="flex gap-2 items-center">
+                    <input type="hidden" id="current-conv-id" value="">
+                    <input type="hidden" id="current-doc-id" value="">
+                    
+                    <div class="relative flex-1">
+                        <input type="text" id="chat-input" placeholder="Ask any programming or framework question, or click the mic to speak..." autocomplete="off"
+                            class="w-full pl-4 pr-10 py-3.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-100 placeholder:text-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-inner outline-none transition-all">
+                    </div>
+
+                    <button type="submit" id="btn-send" class="w-12 h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center text-base shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all flex-shrink-0">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================== -->
+<!-- URL DOCS MODAL                                 -->
+<!-- ============================================== -->
+<div id="url-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 max-w-md w-full p-6 rounded-3xl shadow-2xl space-y-4">
+        <div class="flex items-center justify-between">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-globe text-blue-400"></i> Index Documentation URL
+            </h3>
+            <button id="btn-close-url-modal" type="button" class="text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+            Enter any documentation or webpage link (e.g. https://fastapi.tiangolo.com). CodeVocalis will fetch and index the page so you can ask questions about it.
+        </p>
+        <div>
+            <input type="url" id="url-input" placeholder="https://docs.python.org/3/tutorial/" 
+                class="w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-950 text-white text-xs outline-none focus:border-indigo-500">
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+            <button id="btn-cancel-url" type="button" class="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 text-xs font-semibold hover:bg-slate-800">
+                Cancel
+            </button>
+            <button id="btn-submit-url" type="button" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all">
+                Fetch & Index Page
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================== -->
+<!-- AI API KEY SETTINGS MODAL                      -->
+<!-- ============================================== -->
+<div id="apikey-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 max-w-md w-full p-6 rounded-3xl shadow-2xl space-y-4">
+        <div class="flex items-center justify-between">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-key text-indigo-400"></i> Google Gemini AI API Key
+            </h3>
+            <button id="btn-close-apikey-modal" type="button" class="text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+            Unlock real-time ChatGPT/Gemini power for any programming question, framework architecture, or coding challenge.
+            Get a free API key instantly from <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-400 underline font-semibold">Google AI Studio</a>.
+        </p>
+        <div class="space-y-2">
+            <div id="apikey-status-badge" class="text-[11px] font-mono text-slate-400 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 flex items-center justify-between">
+                <span>Current Status:</span>
+                <span id="apikey-status-text" class="text-amber-400">Checking...</span>
+            </div>
+            <input type="password" id="apikey-input" placeholder="Paste your Gemini Key: AIzaSy..." 
+                class="w-full px-4 py-3 rounded-xl border border-slate-800 bg-slate-950 text-white text-xs outline-none focus:border-indigo-500">
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+            <button id="btn-cancel-apikey" type="button" class="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 text-xs font-semibold hover:bg-slate-800">
+                Cancel
+            </button>
+            <button id="btn-submit-apikey" type="button" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2">
+                <i class="fa-solid fa-check"></i> Save & Activate
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/voice.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %}

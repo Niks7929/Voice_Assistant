@@ -1,0 +1,329 @@
+{% extends 'base.html' %}
+
+{% block title %}CodeVocalis AI - Intelligent Voice Assistant for Developers{% endblock %}
+
+{% block content %}
+<div class="relative overflow-hidden">
+    <!-- Background Glow Blobs -->
+    <div class="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[600px] w-[1000px] -translate-x-1/2 bg-gradient-to-tr from-indigo-600/20 via-blue-600/20 to-purple-600/10 blur-[130px]"></div>
+
+    <!-- ============================================== -->
+    <!-- HERO SECTION                                  -->
+    <!-- ============================================== -->
+    <section class="mx-auto max-w-7xl px-4 pt-16 pb-20 sm:px-6 lg:px-8 lg:pt-24 text-center">
+        <!-- Pill Badge -->
+        <div class="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-1.5 text-xs font-semibold text-indigo-400 backdrop-blur-sm mb-6">
+            <span class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Specialized for All Programming Languages & Frameworks
+        </div>
+
+        <!-- Headline -->
+        <h1 class="mx-auto max-w-4xl text-4xl font-black tracking-tight text-white sm:text-6xl sm:leading-tight">
+            The Voice-Powered <span class="bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">AI Assistant</span> for Modern Developers
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="mx-auto mt-6 max-w-2xl text-base text-slate-400 sm:text-lg leading-relaxed">
+            Speak code naturally, debug complex stack traces, generate production-ready boilerplate, and master 20+ programming languages & frameworks in real time.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+            {% if current_user and current_user.is_authenticated %}
+                <a href="{{ url_for('main.dashboard') }}" class="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-indigo-500/25 hover:from-blue-700 hover:to-indigo-700 hover:scale-105 active:scale-95 transition-all">
+                    <i class="fa-solid fa-gauge-high"></i> Open Your Dashboard
+                </a>
+            {% else %}
+                <a href="{{ url_for('auth.register') }}" class="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-indigo-500/25 hover:from-blue-700 hover:to-indigo-700 hover:scale-105 active:scale-95 transition-all">
+                    <i class="fa-solid fa-user-plus"></i> Get Started Free
+                </a>
+                <a href="{{ url_for('auth.login') }}" class="flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900/80 px-8 py-4 text-sm font-semibold text-slate-200 hover:bg-slate-800 hover:text-white transition-all">
+                    <i class="fa-solid fa-right-to-bracket"></i> Sign In to Account
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- Modern Voice AI Visual Showcase (No Raw Code) -->
+        <div class="mx-auto mt-14 max-w-4xl rounded-3xl border border-slate-800 bg-gradient-to-b from-slate-900/90 to-slate-950/90 p-8 shadow-2xl backdrop-blur-xl">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                <!-- Card 1 -->
+                <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-5 space-y-3 hover:border-indigo-500/40 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600/10 text-blue-400 text-lg">
+                            <i class="fa-solid fa-microphone-lines"></i>
+                        </span>
+                        <span class="text-[11px] font-mono text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-full">Step 1</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-white">Speak or Type</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Ask any programming question with your voice or keyboard. Natural speech recognition transcribes your words in real time.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-5 space-y-3 hover:border-indigo-500/40 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600/10 text-indigo-400 text-lg">
+                            <i class="fa-solid fa-brain"></i>
+                        </span>
+                        <span class="text-[11px] font-mono text-indigo-400 font-semibold bg-indigo-500/10 px-2 py-0.5 rounded-full">Step 2</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-white">AI Code Synthesis</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        CodeVocalis AI analyzes logic, selects the optimal framework patterns, algorithms, and eliminates potential bugs.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-5 space-y-3 hover:border-indigo-500/40 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-600/10 text-purple-400 text-lg">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </span>
+                        <span class="text-[11px] font-mono text-purple-400 font-semibold bg-purple-500/10 px-2 py-0.5 rounded-full">Step 3</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-white">Code & Voice Output</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Inside your private dashboard, get production-ready syntax with 1-click copy and pleasant voice narration.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="mt-8 pt-6 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                <div>
+                    <p class="text-xl font-black text-white">20+</p>
+                    <p class="text-[11px] text-slate-400">Languages Supported</p>
+                </div>
+                <div>
+                    <p class="text-xl font-black text-white">15+</p>
+                    <p class="text-[11px] text-slate-400">Modern Frameworks</p>
+                </div>
+                <div>
+                    <p class="text-xl font-black text-white">Voice & Text</p>
+                    <p class="text-[11px] text-slate-400">Speech Integration</p>
+                </div>
+                <div>
+                    <p class="text-xl font-black text-white">100% Secure</p>
+                    <p class="text-[11px] text-slate-400">Password Hashing</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- PROGRAMMING LANGUAGES COVERAGE                 -->
+    <!-- ============================================== -->
+    <section id="languages" class="border-t border-slate-900 bg-slate-950/60 py-20">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <p class="text-xs font-bold uppercase tracking-wider text-indigo-400">All Major Languages</p>
+                <h2 class="mt-2 text-3xl font-extrabold text-white sm:text-4xl">Every Language. Accurate Answers.</h2>
+                <p class="mt-3 text-slate-400 text-sm">Ask any question on syntax, concurrency, memory management, or object-oriented design.</p>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {% set langs = [
+                    {'name': 'Python', 'icon': 'fa-brands fa-python', 'color': 'text-amber-400', 'desc': 'FastAPI, Django, ML'},
+                    {'name': 'JavaScript', 'icon': 'fa-brands fa-js', 'color': 'text-yellow-400', 'desc': 'ES6+, Async, Node'},
+                    {'name': 'TypeScript', 'icon': 'fa-solid fa-code', 'color': 'text-blue-400', 'desc': 'Interfaces, Generics'},
+                    {'name': 'Java', 'icon': 'fa-brands fa-java', 'color': 'text-rose-400', 'desc': 'Spring Boot, Streams'},
+                    {'name': 'C++', 'icon': 'fa-solid fa-microchip', 'color': 'text-cyan-400', 'desc': 'STL, RAII, Memory'},
+                    {'name': 'Go (Golang)', 'icon': 'fa-brands fa-golang', 'color': 'text-sky-400', 'desc': 'Goroutines, Channels'},
+                    {'name': 'Rust', 'icon': 'fa-brands fa-rust', 'color': 'text-orange-400', 'desc': 'Ownership, Borrowing'},
+                    {'name': 'C#', 'icon': 'fa-solid fa-code', 'color': 'text-purple-400', 'desc': '.NET Core, LINQ'},
+                    {'name': 'PHP', 'icon': 'fa-brands fa-php', 'color': 'text-indigo-400', 'desc': 'Laravel, Modern 8.3+'},
+                    {'name': 'SQL', 'icon': 'fa-solid fa-database', 'color': 'text-emerald-400', 'desc': 'Joins, Indexing, ACID'},
+                    {'name': 'Flutter / Dart', 'icon': 'fa-solid fa-mobile-screen', 'color': 'text-teal-400', 'desc': 'Widgets, State Mgmt'},
+                    {'name': 'HTML / CSS', 'icon': 'fa-brands fa-html5', 'color': 'text-rose-400', 'desc': 'Flexbox, Grid, Tail'}
+                ] %}
+
+                {% for l in langs %}
+                <div class="rounded-2xl border border-slate-800/80 bg-slate-900/60 p-4 text-center hover:border-indigo-500/40 hover:bg-slate-900 transition-all group">
+                    <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-slate-950 text-2xl {{ l.color }} mb-3 group-hover:scale-110 transition-transform">
+                        <i class="{{ l.icon }}"></i>
+                    </div>
+                    <h3 class="text-sm font-bold text-white">{{ l.name }}</h3>
+                    <p class="mt-1 text-[11px] text-slate-400">{{ l.desc }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- FRAMEWORKS & ECOSYSTEM                         -->
+    <!-- ============================================== -->
+    <section id="frameworks" class="border-t border-slate-900 py-20">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <p class="text-xs font-bold uppercase tracking-wider text-indigo-400">Frameworks Mastery</p>
+                <h2 class="mt-2 text-3xl font-extrabold text-white sm:text-4xl">Deep Framework Understanding</h2>
+                <p class="mt-3 text-slate-400 text-sm">Full support for modern frontend, backend, full-stack, and mobile frameworks.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Frontend Card -->
+                <div class="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 hover:border-indigo-500/30 transition-all">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400 text-lg">
+                            <i class="fa-brands fa-react"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-white">Frontend Frameworks</h3>
+                            <p class="text-xs text-slate-400">Client-Side UI & Components</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-2 text-xs text-slate-300">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> <strong>React.js & Next.js:</strong> Hooks, Server Components, SSR</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> <strong>Vue.js & Nuxt:</strong> Composition API, Reactive State</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> <strong>Angular:</strong> RxJS, Services, Dependency Injection</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> <strong>TailwindCSS & Bootstrap:</strong> Responsive UI Grid</li>
+                    </ul>
+                </div>
+
+                <!-- Backend Card -->
+                <div class="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 hover:border-indigo-500/30 transition-all">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 text-lg">
+                            <i class="fa-solid fa-server"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-white">Backend & Microservices</h3>
+                            <p class="text-xs text-slate-400">High-Performance APIs</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-2 text-xs text-slate-300">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> <strong>FastAPI & Flask:</strong> Async APIs, SQLAlchemy ORM</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> <strong>Node.js & Express:</strong> Middleware, JSON, JWT Auth</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> <strong>Django & DRF:</strong> Models, Migrations, Serializers</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> <strong>Spring Boot:</strong> Dependency Injection, Hibernate</li>
+                    </ul>
+                </div>
+
+                <!-- Mobile & Cloud Card -->
+                <div class="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 hover:border-indigo-500/30 transition-all">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400 text-lg">
+                            <i class="fa-brands fa-docker"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-white">Mobile, Data & DevOps</h3>
+                            <p class="text-xs text-slate-400">Deployment & Cloud Tools</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-2 text-xs text-slate-300">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> <strong>Flutter & React Native:</strong> Native Mobile Apps</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> <strong>Docker & Kubernetes:</strong> Multi-stage Containers</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> <strong>Git & GitHub:</strong> Rebase, Cherry-pick, Conflict fixes</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> <strong>SQL & PostgreSQL:</strong> Index optimization, CTEs</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- CORE FEATURES                                  -->
+    <!-- ============================================== -->
+    <section id="features" class="border-t border-slate-900 bg-slate-950/60 py-20">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <p class="text-xs font-bold uppercase tracking-wider text-indigo-400">Why CodeVocalis AI?</p>
+                <h2 class="mt-2 text-3xl font-extrabold text-white sm:text-4xl">Engineered for Developer Productivity</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="rounded-3xl border border-slate-800 bg-slate-900/40 p-6 space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-microphone-lines"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Voice-to-Code Recognition</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Speak programming queries naturally. Built-in speech-to-text converts voice questions into structured prompts and speaks back clear explanations.
+                    </p>
+                </div>
+
+                <div class="rounded-3xl border border-slate-800 bg-slate-900/40 p-6 space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-bug"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Bug & Error Diagnosis</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Paste stack traces, compiler errors, or broken snippets. The assistant diagnoses root causes and generates production-ready bug fixes.
+                    </p>
+                </div>
+
+                <div class="rounded-3xl border border-slate-800 bg-slate-900/40 p-6 space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-file-code"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Codebase & Doc Attachment</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Attach local files (.py, .js, .ts, .pdf, .docx) or paste documentation URLs. Ask specific architectural and implementation questions.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- FAQ SECTION                                    -->
+    <!-- ============================================== -->
+    <section id="faq" class="border-t border-slate-900 py-20">
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-8">
+            <div class="text-center">
+                <p class="text-xs font-bold uppercase tracking-wider text-indigo-400">Frequently Asked Questions</p>
+                <h2 class="mt-2 text-3xl font-extrabold text-white">Developer FAQ</h2>
+            </div>
+
+            <div class="space-y-4">
+                <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-circle-question text-indigo-400"></i>
+                        Does CodeVocalis AI provide real, complete code or placeholders?
+                    </h3>
+                    <p class="mt-2 text-xs text-slate-400 leading-relaxed">
+                        All code snippets are 100% syntactically valid, production-ready, and copy-pasteable. There are no vague placeholder functions.
+                    </p>
+                </div>
+
+                <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-circle-question text-indigo-400"></i>
+                        How does the voice feature work?
+                    </h3>
+                    <p class="mt-2 text-xs text-slate-400 leading-relaxed">
+                        It utilizes the browser's high-speed Web Speech Recognition API to transcribe your voice instantly, and reads aloud explanations using Text-to-Speech (TTS), with full mute/toggle controls.
+                    </p>
+                </div>
+
+                <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-circle-question text-indigo-400"></i>
+                        Are passwords safely hashed?
+                    </h3>
+                    <p class="mt-2 text-xs text-slate-400 leading-relaxed">
+                        Yes. All user credentials use modern cryptographic salted password hashing (Werkzeug scrypt / pbkdf2) ensuring complete database security.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-900 bg-slate-950 py-8 text-center text-xs text-slate-500">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2 font-bold text-slate-400">
+                <i class="fa-solid fa-code text-indigo-400"></i> CodeVocalis AI • 2026
+            </div>
+            <p>Empowering software engineers with voice-driven AI code synthesis.</p>
+            <div class="flex gap-4">
+                <a href="{{ url_for('main.index') }}" class="hover:text-slate-300">Home</a>
+                <a href="#languages" class="hover:text-slate-300">Languages</a>
+                <a href="#frameworks" class="hover:text-slate-300">Frameworks</a>
+            </div>
+        </div>
+    </footer>
+</div>
+{% endblock %}
